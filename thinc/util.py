@@ -397,11 +397,11 @@ def xp2torch(
     if device is None:
         device = get_torch_default_device()
 
-    if hasattr(xp_tensor, "toDlpack"):
+    if hasattr(xp_tensor, "__dlpack__"):
+        torch_tensor = torch.utils.dlpack.from_dlpack(xp_tensor)
+    elif hasattr(xp_tensor, "toDlpack"):
         dlpack_tensor = xp_tensor.toDlpack()  # type: ignore
         torch_tensor = torch.utils.dlpack.from_dlpack(dlpack_tensor)
-    elif hasattr(xp_tensor, "__dlpack__"):
-        torch_tensor = torch.utils.dlpack.from_dlpack(xp_tensor)
     else:
         torch_tensor = torch.from_numpy(xp_tensor)
 
